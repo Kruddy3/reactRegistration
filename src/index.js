@@ -7,20 +7,37 @@ function formatName(user){
   return user.firstName + " " + user.lastName;
 }
 
-const user = {
-  firstName: 'Kevin',
-  lastName: "Ruddy"
-}
-
 class Input extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {firstName: "kevin"}
+    this.state = {username: "", password:""}
+    this.userInput = this.userInput.bind(this);
+    this.passInput = this.passInput.bind(this);
+  }
+
+  userInput(event) {
+    this.setState({username: event.target.value});
+  }
+  
+  passInput(event){
+    this.setState({password: event.target.value});
   }
 
   render(){
     return(
-      <h1>{this.state.firstName}</h1>
+      <form>
+        <label>
+          <div>User Name:</div>
+          <div>{this.state.username}</div>
+          <input type="text" value={this.state.username} onChange={this.userInput} />
+        </label>
+        <label>
+          <div>Password:</div>
+          <div>{this.state.password}</div>
+          <input type="text" value={this.state.password} onChange={this.passInput} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
     )
   }
 }
@@ -28,8 +45,7 @@ class Input extends React.Component {
 
 
 const element = (
-  [<Input />,
-  <Input />]
+  <Input />
 )
 
 ReactDOM.render(
