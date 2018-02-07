@@ -12,8 +12,24 @@ const user = {
   lastName: "Ruddy"
 }
 
+class Input extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {firstName: "kevin"}
+  }
+
+  render(){
+    return(
+      <h1>{this.state.firstName}</h1>
+    )
+  }
+}
+
+
+
 const element = (
-  <h1>Hello, {formatName(user)}!</h1>
+  [<Input />,
+  <Input />]
 )
 
 ReactDOM.render(
