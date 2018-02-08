@@ -93,13 +93,15 @@ class Input extends React.Component {
   }
 
   userInput(event) {
-    this.setState({username: event.target.value});
+    this.setState({username: store.getState()});
     store.dispatch({ type: 'TESTINGS' })
 
   }
 
   passInput(event){
-    this.setState({password: event.target.value});
+    this.setState({password: store2.getState()});
+    store2.dispatch({ type: 'TESTING' })
+
   }
 
   render(){
@@ -108,12 +110,12 @@ class Input extends React.Component {
         <label>
           <div>User Name:</div>
           <div>{this.state.username}</div>
-          <input type="text" value={this.state.username} onChange={this.userInput} />
+          <input type="text" value={store.getState()} onChange={this.userInput} />
         </label>
         <label>
           <div>Password:</div>
           <div>{this.state.password}</div>
-          <input type="text" value={this.state.password} onChange={this.passInput} />
+          <input type="text" value={store2.getState()} onChange={this.passInput} />
         </label>
         <input type="submit" value="Submit" />
       </form>
