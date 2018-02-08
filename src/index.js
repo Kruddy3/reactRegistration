@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import { createStore } from 'redux'
 import { connect } from 'react-redux'
+import { composeWithDevTools } from 'redux-devtools-extension';
 
 
 
@@ -43,13 +44,21 @@ function testStore(state = 7, action) {
   default:
     return state
   }
+  +  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+
 }
 
 // Create a Redux store holding the state of your app.
 // Its API is { subscribe, dispatch, getState }.
 // let store = createStore(counter)
+
+const enhancers = (
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  );
+const defaultState = 0;
 let store = createStore(testStore)
-let store2 = createStore(counter)
+let store2 = createStore(counter, defaultState, enhancers)
+
 // You can use subscribe() to update the UI in response to state changes.
 // Normally you'd use a view binding library (e.g. React Redux) rather than subscribe() directly.
 // However it can also be handy to persist the current state in the localStorage.
@@ -90,6 +99,10 @@ class Input extends React.Component {
     this.state = {username: "", password:""}
     this.userInput = this.userInput.bind(this);
     this.passInput = this.passInput.bind(this);
+
+    store2.subscribe(() =>
+      this.setState({password: store2.getState()})
+    )
   }
 
   userInput(event) {
@@ -114,7 +127,7 @@ class Input extends React.Component {
         </label>
         <label>
           <div>Password:</div>
-          <div>{this.state.password}</div>
+          <div>{store2.getState()}</div>
           <input type="text" value={store2.getState()} onChange={this.passInput} />
         </label>
         <input type="submit" value="Submit" />
@@ -134,3 +147,9 @@ ReactDOM.render(
   element,
   document.getElementById('root')
 );
+
+store2.subscribe(() => {ReactDOM.render(
+  element,
+  document.getElementById('root')
+)})
+setInterval(function(){ store2.dispatch({ type: 'TESTING' }) }, 100);
