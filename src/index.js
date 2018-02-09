@@ -6,22 +6,7 @@ import { connect } from 'react-redux'
 import { composeWithDevTools } from 'redux-devtools-extension';
 
 
-
-
-
-/**
- * This is a reducer, a pure function with (state, action) => state signature.
- * It describes how an action transforms the state into the next state.
- *
- * The shape of the state is up to you: it can be a primitive, an array, an object,
- * or even an Immutable.js data structure. The only important part is that you should
- * not mutate the state object, but return a new object if the state changes.
- *
- * In this example, we use a `switch` statement and strings, but you can use a helper that
- * follows a different convention (such as function maps) if it makes sense for your
- * project.
- */
- function counter(state = 0, action) {
+ function counter(state = "hello", action) {
   switch (action.type) {
   case 'INCREMENT':
     return state + 1
@@ -33,25 +18,21 @@ import { composeWithDevTools } from 'redux-devtools-extension';
     return state
   }
 }
-function testStore(state = 7, action) {
+function testStore(state = "hello", action) {
   switch (action.type) {
   case 'INCREMENTS':
     return state + 1
   case 'DECREMENTS':
     return state - 1
   case 'TESTINGS':
-    return state + 100
+    state = action.text;
+    return state
   default:
     return state
   }
   +  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 
 }
-
-// Create a Redux store holding the state of your app.
-// Its API is { subscribe, dispatch, getState }.
-// let store = createStore(counter)
-
 const enhancers = (
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   );
@@ -59,30 +40,9 @@ const defaultState = 0;
 let store = createStore(testStore)
 let store2 = createStore(counter, defaultState, enhancers)
 
-// You can use subscribe() to update the UI in response to state changes.
-// Normally you'd use a view binding library (e.g. React Redux) rather than subscribe() directly.
-// However it can also be handy to persist the current state in the localStorage.
-
-store.subscribe(() =>
-  console.log(store.getState())
-)
-store2.subscribe(() =>
-  console.log(store2.getState())
-)
-
-// The only way to mutate the internal state is to dispatch an action.
-// The actions can be serialized, logged or stored and later replayed.
-store2.dispatch({ type: 'INCREMENT' })
-// 1
-store.dispatch({ type: 'DECREMENTS' })
-// 2
-store.dispatch({ type: 'TESTINGS' })
-// 1
-
 class SecondReader extends React.Component {
   constructor(props) {
     super(props);
-    {console.log(props)}
   }
   render(){
     return(
@@ -91,8 +51,6 @@ class SecondReader extends React.Component {
   }
 }
 
-
-
 class Input extends React.Component {
   constructor(props) {
     super(props);
@@ -100,14 +58,16 @@ class Input extends React.Component {
     this.userInput = this.userInput.bind(this);
     this.passInput = this.passInput.bind(this);
 
+    store.subscribe(() =>
+      this.setState({username: store.getState()})
+    )
     store2.subscribe(() =>
       this.setState({password: store2.getState()})
     )
   }
 
   userInput(event) {
-    this.setState({username: store.getState()});
-    store.dispatch({ type: 'TESTINGS' })
+    store.dispatch({ type: 'TESTINGS', text: event.target.value})
 
   }
 
@@ -137,7 +97,6 @@ class Input extends React.Component {
 }
 
 
-
 const element = (
   [<Input />,
   <SecondReader />]
@@ -152,4 +111,3 @@ store2.subscribe(() => {ReactDOM.render(
   element,
   document.getElementById('root')
 )})
-setInterval(function(){ store2.dispatch({ type: 'TESTING' }) }, 100);
